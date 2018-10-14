@@ -116,9 +116,6 @@ int main()
 			{
 				cout << "Question " << pos + 1 << ": ";
 				cin >> answer;
-				cin.clear();
-				cin.ignore(numeric_limits<int> ::max(), '\n');
-				
 				if(answer == '\n' || isspace(answer))
 				{
 					
@@ -138,7 +135,7 @@ int main()
 					answer = toupper(answer);
 				}
 				
-				if (answer < 65 || answer > 68 || (cin.fail() && cin.peek() != '\n') )
+				if (answer < 65 || answer > 68 ) 
 				{
 					cin.clear();
 					cin.ignore(numeric_limits<int> ::max(), '\n');
