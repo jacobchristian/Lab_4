@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <string>
 
+#include <limits>    // For clearing the max spaces 
 
 /*	INSTRUCTIONS
  Make sure the following requirements are met.
@@ -36,7 +37,7 @@ class TestGrader
 		
 		void setKey(string key);
 		void grade(char []);
-		
+
 
 };
 
@@ -95,6 +96,7 @@ int main()
 	char doAnother;
 	char answer;
 	char testTakerAnswers[QUESTIONS];
+		
 	TestGrader DMVexam;
 	
 	DMVexam.setKey("BDAACABACDBCDADCCBDA");
@@ -105,7 +107,7 @@ int main()
 		cout << "\nApplicant Name: ";
 		getline(cin, name);
 		
-		cout << "Enter anwers for " << name <<".\n";
+		cout << "\nEnter answers for " << name <<".\n";
 		cout << "Use only the letters A, B, C, D.\n\n";
 		
 		for (int pos = 0; pos < QUESTIONS; pos++)
@@ -114,27 +116,32 @@ int main()
 			{
 				cout << "Question " << pos + 1 << ": ";
 				cin >> answer;
-				answer = toupper(answer);
+				cin.clear();
+				cin.ignore(numeric_limits<int> ::max(), '\n');
 				
-				if(isspace(answer))
+				if(answer == '\n' || isspace(answer))
 				{
-					cin.clear();
-					cin.ignore();
-					if (blankAnswerAttempts == 2)
+					
+					if (blankAnswerAttempts == 1)
 					{
-						cout << "Question " << pos + 1 << "is now marked as incorrect.";
+						cout << "Question " << pos + 1 << " is now marked as incorrect.\n";
 						testTakerAnswers[pos] = 'F';
 						blankAnswerAttempts = 0;
 						break;
 					}
-					cout << "Warning: No input given. If this happens once more, the answer will be marked as 'incorrect.'\n";
+					cout << "Warning: No input given. If this happens once more, the answer will be marked as 'incorrect.' Please advise.\n";
 					blankAnswerAttempts ++;
 					continue;
 				}
-				else if (answer < 65 || answer > 68)
+				else
+				{
+					answer = toupper(answer);
+				}
+				
+				if (answer < 65 || answer > 68 || (cin.fail() && cin.peek() != '\n') )
 				{
 					cin.clear();
-					cin.ignore();
+					cin.ignore(numeric_limits<int> ::max(), '\n');
 					cout << "Incorrect input, please enter A-D for answers.\n";
 					continue;
 				}
@@ -145,10 +152,12 @@ int main()
 				}
 			}
 		}
-	cout << "Grade another exam (Y/N) ?";
-	cin >> doAnother;
-	cout << endl;
-	cin.ignore();
+		for(char letter : testTakerAnswers)
+			cout << letter << " ";
+		cout << "Grade another exam (Y/N) ?";
+		cin >> doAnother;
+		cout << endl;
+		cin.ignore(numeric_limits<int> ::max(), '\n');
 		
 	}while(toupper(doAnother == 'Y'));
 	
