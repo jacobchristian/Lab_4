@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include <string>
+#include <cstring>
 
 #include <limits>    // For clearing the max spaces 
 
@@ -94,7 +94,8 @@ int main()
 {
 	string name;
 	char doAnother;
-	char answer;
+	string answer;
+	char answer_convert[1];
 	char testTakerAnswers[QUESTIONS];
 		
 	TestGrader DMVexam;
@@ -115,8 +116,8 @@ int main()
 			while (true)
 			{
 				cout << "Question " << pos + 1 << ": ";
-				cin >> answer;
-				if(answer == '\n' || isspace(answer))
+				getline(cin, answer);
+				if(answer == "")
 				{
 					
 					if (blankAnswerAttempts == 1)
@@ -130,33 +131,49 @@ int main()
 					blankAnswerAttempts ++;
 					continue;
 				}
-				else
+				
+				else if (answer.length() > 1)
 				{
-					answer = toupper(answer);
+					cout << "Incorrect input, please enter A-D for answers.\n";
+					continue;
 				}
 				
-				if (answer < 65 || answer > 68 ) 
+				else
 				{
-					cin.clear();
-					cin.ignore(numeric_limits<int> ::max(), '\n');
+					copy(answer.begin(), answer.end(), answer_convert);
+					*answer_convert = toupper(*answer_convert);
+				}
+				
+				if (*answer_convert < 65 || *answer_convert > 68) 
+				{
+					//cin.clear();
+					//cin.ignore(numeric_limits<int> ::max(), '\n');
 					cout << "Incorrect input, please enter A-D for answers.\n";
 					continue;
 				}
 				else
 				{
-					testTakerAnswers[pos] = answer;
+					
+					testTakerAnswers[pos] = *answer_convert;
 					break;
 				}
 			}
 		}
 		for(char letter : testTakerAnswers)
 			cout << letter << " ";
-		cout << "Grade another exam (Y/N) ?";
-		cin >> doAnother;
-		cout << endl;
-		cin.ignore(numeric_limits<int> ::max(), '\n');
+		do{
+			cout << "Grade another exam (Y/N) ?";
+			cin >> doAnother;
+			doAnother = toupper(doAnother);
+			cout << endl;
+			if (!(doAnother == 'Y' || doAnother == 'N'))
+			{
+				cout << "Please enter 'Y' for yes, or 'N' for no.\n ";
+			}
+			cin.ignore(numeric_limits<int> ::max(), '\n');
+		}while(!(doAnother == 'Y' || doAnother == 'N'));
 		
-	}while(toupper(doAnother == 'Y'));
-	
+	}while(doAnother == 'Y');
+	cout << "Goodbye!";
 	return 0; 
 }
