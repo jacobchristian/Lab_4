@@ -1,27 +1,8 @@
 #include <iostream>
 #include <iomanip>
 #include <cstring>
-
 #include <limits>    // For clearing the max spaces 
 
-/*	INSTRUCTIONS
- Make sure the following requirements are met.
-Write a program that grades the written portion of a Department of Motor Vehicles (DMV) driver's license exam.  The exam has 20 multiple choice questions.  
-The correct answers are: 1-B,2-D,3-A,4-A,5-C,6-A,7-B,8-A,9-C,10-D,11-B,12-C,13-D,14-A,15-D,16-C,17-C,18-B,19-D,20-A. 
-
-    Create a TestGrader class that includes an answers array of 20 characters (or string) which holds the correct test answers. 
-    The class will have two public member functions that enable user programs to interact with the class: setKey and grade. 
-    The setKey function receives a 20-character string holding the correct answers and copies this information into its answers array. 
-    Hint: can use string copy method to copy a string to a character array
-    The grade function receives a 20-character string holding the test taker's answers and compares each of their answers to the correct ones. 
-    After grading the exam the function should display a message indicating whether the applicant passed or failed the exam. 15 or more correct answers are required to pass. 
-    The function should then display the total number of correctly answered questions, the total number of incorrectly answered questions, and a list of the question numbers for all incorrectly answered questions. 
-    The client program that creates and uses a TestGrader object should first make a single call to setKey, passing it a string containing the 20 correct answers. 
-    After the above step, the client program should allow a test taker's 20 answers to be entered, store them in a 20-character array (or string), and then call the grade function to grade the exam. 
-    The program should loop to allow additional tests to be entered and graded until the user indicates a desire to stop. 
-    Input validation: Only accept the letters A, B, C, and D for test answers.
-    Hint: could use the char function toupper from <cctype>
-*/
 using namespace std;
 
 const int QUESTIONS = 20;
@@ -31,14 +12,11 @@ class TestGrader
 	private:
 		char correctAnswers[QUESTIONS];
 		int getNumWrong(char []);
-//		void missedQuestions(char []); 
-		 
+		void missedQuestions(const char []); 		 
 	public:
 		
 		void setKey(string key);
 		void grade(char []);
-
-
 };
 
 
@@ -49,7 +27,7 @@ void TestGrader::setKey(string key)
 		cout << "Error in data.\n";
 		return;
 	}
-	for (int pos; pos < QUESTIONS; pos++)
+	for (int pos = 0; pos < QUESTIONS; pos++)
 	{
 		correctAnswers[pos] = key[pos];
 	}
@@ -58,22 +36,35 @@ void TestGrader::setKey(string key)
 void TestGrader::grade(char test[])
 {
 	int numWrong = getNumWrong(test);
+	double grade_percent = (((static_cast<double>(QUESTIONS) - static_cast<double>(numWrong))/static_cast<double>(QUESTIONS) )* 100);
+	
 	if (numWrong <= 5)
 	{
-		cout << "Congratulations, you passed the exam!\n";
+		cout << "Congratulations, you passed the exam with a " << grade_percent << "%! \n";
 	}
 	else
 	{
-		cout << "Sorry, you did not pass the exam.\n";
+		cout << "Sorry, you failed the exam with a " << grade_percent <<"%.\n";
 	}
-	cout << "You got " << (QUESTIONS - numWrong) << "questions correct.";
+	cout << "You got " << (QUESTIONS - numWrong) << " questions correct. ";
 	if (numWrong > 0)
 	{
 		cout << "You missed the following " << numWrong << " questions:\n";
-//		missedQuestions(test);
+		missedQuestions(test);
 	}
 }
 
+void TestGrader::missedQuestions(const char studentAnswers[])
+{
+	for (int pos = 0; pos < QUESTIONS; pos++)
+	{
+		if (studentAnswers[pos] != correctAnswers[pos])
+		{
+			cout << pos + 1 << " ";
+		}
+	}
+	cout << "\n\n";
+}
 
 int TestGrader::getNumWrong(char test[])
 {
@@ -95,7 +86,6 @@ int main()
 	string name;
 	char doAnother;
 	string answer;
-	char answer_convert[1];
 	char testTakerAnswers[QUESTIONS];
 		
 	TestGrader DMVexam;
@@ -115,7 +105,8 @@ int main()
 		{
 			while (true)
 			{
-				cout << "Question " << pos + 1 << ": ";
+				
+				cout << "Question " << right << setw(2) << pos + 1 << ": ";
 				getline(cin, answer);
 				if(answer == "")
 				{
@@ -140,11 +131,10 @@ int main()
 				
 				else
 				{
-					copy(answer.begin(), answer.end(), answer_convert);
-					*answer_convert = toupper(*answer_convert);
+					answer[0] = toupper(answer[0]);
 				}
 				
-				if (*answer_convert < 65 || *answer_convert > 68) 
+				if (answer[0] < 'A' || answer[0] > 'D') 
 				{
 					//cin.clear();
 					//cin.ignore(numeric_limits<int> ::max(), '\n');
@@ -154,13 +144,12 @@ int main()
 				else
 				{
 					
-					testTakerAnswers[pos] = *answer_convert;
+					testTakerAnswers[pos] = answer[0];
 					break;
 				}
 			}
 		}
-		for(char letter : testTakerAnswers)
-			cout << letter << " ";
+		DMVexam.grade(testTakerAnswers);
 		do{
 			cout << "Grade another exam (Y/N) ?";
 			cin >> doAnother;
