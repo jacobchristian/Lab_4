@@ -1,9 +1,3 @@
-// Author:				Jacob Christian
-// Assignment Number:   Lab 1
-// File Name:			L3_Chrisitan.cpp 
-// Course/Section:      COSC 1337 Section 014
-// Date:                October 19, 2018
-// Instructor:          Dr. Bernard Ku	
 
 #include <iostream>
 #include <iomanip>
